@@ -44,11 +44,44 @@ async function run (){
             const email =req.params.email;
             const query ={email:email};
             const user = await customersCollection.deleteOne(query);
-            
             res.send(user)
 
         })
+           /* Products Section */
 
+           app.get('/products', async (req, res) => {
+            const query = {};
+            const cursor = productsCollection.find(query);
+            const products = await cursor.toArray();
+            res.send(products);
+          });
+          app.post('/products', async(req,res)=>{
+            const product =req.body;
+            const addProduct = await productsCollection.insertOne(product)
+            res.send(addProduct)
+          })
+          app.delete('/products/:id', async(req,res)=>{
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)};
+            const result = await productsCollection.deleteOne(query);
+            
+            res.send(result);
+          })
+          app.put('/products/:id', async(req, res) =>{
+            const id = req.params.id;
+            const updatedProduct = req.body
+            console.log(updatedUser);
+            const filter = {_id: ObjectId(id)};
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: updatedProduct
+                  
+            };
+            const result = await productsCollection.updateOne(filter, updatedDoc, options);
+            
+            res.send(result);
+    
+        })
    }
    finally{
 
