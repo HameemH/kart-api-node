@@ -21,6 +21,34 @@ async function run (){
        const ordersCollection = client.db("CRUD").collection("orders");
 
        /* Customers Section */
+       app.get('/users', async (req,res)=>{
+        const query ={};
+        const cursor = customersCollection.find(query)
+        const users = await cursor.toArray();
+        res.send(users)
+        })
+        //   will use to update and add new customer with same api as it is put method 
+        app.put('/users/:email', async(req,res) =>{
+            const email = req.params.email;
+
+            const user = req.body;
+            const filter = { email: email };
+            const options = { upsert: true };
+            const updateDoc = {
+              $set: user,
+            };
+            const result = await customersCollection.updateOne(filter, updateDoc, options);
+            res.send(result)
+        })
+        app.delete('users/:email', async(req,res) =>{
+            const email =req.params.email;
+            const query ={email:email};
+            const user = await customersCollection.deleteOne(query);
+            
+            res.send(user)
+
+        })
+
    }
    finally{
 
